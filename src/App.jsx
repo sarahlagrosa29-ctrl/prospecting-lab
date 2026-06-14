@@ -14,7 +14,7 @@ const MAV_LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADRCAYAAAAj
 // directly (key handled by the platform). To deploy standalone, change this ONE
 // line to your proxy URL (e.g. "https://your-worker.workers.dev") so the API key
 // lives on the server, never in this file. Nothing else needs to change.
-const API_URL = "/api/claude";
+const API_URL = "/api/chat";
 
 const MAV_GREETINGS = [
   "Quick one, who am I coaching?",
