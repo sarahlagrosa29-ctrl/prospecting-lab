@@ -1147,7 +1147,7 @@ export default function FASTLinkSim() {
     if (openerUsed) { setOpenersOpen(o => !o); return; }
     setOpenerUsed(true); setOpenersOpen(true); setOpenerLoading(true);
     try {
-      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:500, messages:[{role:"user",content:buildOpenerPrompt(situation, contextType, mode, lang)}] }) });
+      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:500, messages:[{role:"user",content:buildOpenerPrompt(situation, contextType, mode, lang)}] }) });
       const d = await r.json();
       const arr = JSON.parse((d.content?.[0]?.text || "").replace(/```json|```/g,"").trim());
       setOpenerIdeas(Array.isArray(arr) ? arr.slice(0,3) : null);
@@ -1219,7 +1219,7 @@ export default function FASTLinkSim() {
       return;
     }
     try {
-      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:300, messages:[{role:"user",content:buildHintPrompt(mode, situation, contextType, agentType, linkType, messages, lang)}] }) });
+      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:300, messages:[{role:"user",content:buildHintPrompt(mode, situation, contextType, agentType, linkType, messages, lang)}] }) });
       const d = await r.json();
       const h = (d.content?.[0]?.text || "").trim() || getHint(messages, exchangeCount, mode, situation, agentType, contextType);
       setHint(h || "Keep it short. React to their last message, then take one real step toward the link.");
@@ -1241,7 +1241,7 @@ export default function FASTLinkSim() {
     if (!customInput.trim() || customLoading) return;
     setCustomLoading(true);
     try {
-      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1000, messages:[{role:"user",content:buildCustomPersonaPrompt(customInput)}] }) });
+      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:1000, messages:[{role:"user",content:buildCustomPersonaPrompt(customInput)}] }) });
       const d = await r.json(); const p = JSON.parse((d.content?.[0]?.text||"").replace(/```json|```/g,"").trim());
       pick({ id:"custom_"+Date.now(), emoji:"🎯", ...p }, "custom");
     } catch(e) { console.error(e); }
@@ -1268,7 +1268,7 @@ export default function FASTLinkSim() {
     try {
       let sys = mode === "qualify" ? buildQualifyPrompt(linkType, situation, lang, difficulty) : buildSimPrompt(linkType, situation, contextType, agentType, lang, difficulty);
       if (wasQuiet) { setPendingFollowUp(false); sys += `\n\nFOLLOW-UP CONTEXT: You went quiet for a while after their last message. They are now following up. React like a real person who got busy and is just now seeing it. If the follow-up is light, short, and friendly, warm back up. If it's pushy, salesy, or a paragraph, stay cool or barely respond.`; }
-      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1000, system:sys, messages:toApiMessages(upd) }) });
+      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:1000, system:sys, messages:toApiMessages(upd) }) });
       const d = await r.json();
       const reply = d.content?.[0]?.text || "...";
       setMessages(p => [...p, { role:"assistant", content:reply }]);
@@ -1282,7 +1282,7 @@ export default function FASTLinkSim() {
     setScoringLoading(true); setScreen("score"); setOpenSections({});
     try {
       const prompt = mode === "qualify" ? buildQualifyScoringPrompt(linkType, situation, messages) : buildSimScoringPrompt(linkType, situation, contextType, messages, agentType);
-      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1000, messages:[{role:"user",content:prompt}] }) });
+      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:1000, messages:[{role:"user",content:prompt}] }) });
       const d = await r.json(); const p = JSON.parse((d.content?.[0]?.text||"").replace(/```json|```/g,"").trim());
       setScoring(p); setStats(s => ({ played:s.played+1, passed:s.passed+(p.passed?1:0), total:s.total+p.total_score }));
     } catch(e) { setScoring({error:true}); console.error(e); }
@@ -1318,7 +1318,7 @@ export default function FASTLinkSim() {
     if (regenLoading) return;
     setRegenLoading(true);
     try {
-      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:600, messages:[{role:"user",content:buildQualifyScenarioPrompt(linkType)}] }) });
+      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:600, messages:[{role:"user",content:buildQualifyScenarioPrompt(linkType)}] }) });
       const d = await r.json(); const p = JSON.parse((d.content?.[0]?.text||"").replace(/```json|```/g,"").trim());
       setRegenLoading(false);
       pick({ id:"qregen_"+Date.now(), emoji:"🎲", ...p }, "qualify");
@@ -1332,7 +1332,7 @@ export default function FASTLinkSim() {
     const upd = [...mavMessages, { role:"user", content:txt }];
     setMavMessages(upd); setMavInput(""); setMavLoading(true);
     try {
-      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:700, system:buildMavPrompt(lang, mavContext, mavTrack), messages:upd.map(m=>({role:m.role==="user"?"user":"assistant",content:m.content})) }) });
+      const r = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:700, system:buildMavPrompt(lang, mavContext, mavTrack), messages:upd.map(m=>({role:m.role==="user"?"user":"assistant",content:m.content})) }) });
       const d = await r.json();
       setMavMessages(p => [...p, { role:"assistant", content:d.content?.[0]?.text||"..." }]);
     } catch(e) { setMavMessages(p => [...p, { role:"assistant", content:"Something went wrong, try again." }]); console.error(e); }
